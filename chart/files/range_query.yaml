@@ -1,0 +1,99 @@
+## Set of recording rules for nodeexporter
+##  from https://awesome-prometheus-alerts.grep.to/rules.html#host-and-hardware-1
+promql_list:
+  - promql: irate(node_disk_reads_completed_total{}[1m])
+    query_range: 1h
+    query_step: 15s
+  - promql: irate(node_disk_reads_completed_total{}[1m])
+    query_range: 3h
+    query_step: 15s
+  - promql: irate(node_disk_reads_completed_total{}[1m])
+    query_range: 6h
+    query_step: 15s
+  - promql: irate(node_disk_reads_completed_total{}[1m])
+    query_range: 24h
+    query_step: 60s
+  - promql: irate(node_network_receive_bytes_total{device!~'tap.*'}[5m])*8
+    query_range: 1h
+    query_step: 15s
+  - promql: irate(node_network_receive_bytes_total{device!~'tap.*'}[5m])*8
+    query_range: 3h
+    query_step: 15s
+  - promql: irate(node_network_receive_bytes_total{device!~'tap.*'}[5m])*8
+    query_range: 6h
+    query_step: 15s
+  - promql: irate(node_network_receive_bytes_total{device!~'tap.*'}[5m])*8
+    query_range: 24h
+    query_step: 60s
+  - promql: irate(node_network_transmit_bytes_total{device!~'tap.*'}[5m])*8
+    query_range: 1h
+    query_step: 15s
+  - promql: irate(node_network_transmit_bytes_total{device!~'tap.*'}[5m])*8
+    query_range: 3h
+    query_step: 15s
+  - promql: irate(node_network_transmit_bytes_total{device!~'tap.*'}[5m])*8
+    query_range: 6h
+    query_step: 15s
+  - promql: irate(node_network_transmit_bytes_total{device!~'tap.*'}[5m])*8
+    query_range: 24h
+    query_step: 60s
+  - promql: irate(node_disk_io_time_seconds_total{}[1m])
+    query_range: 1h
+    query_step: 15s
+  - promql: irate(node_disk_io_time_seconds_total{}[1m])
+    query_range: 3h
+    query_step: 15s
+  - promql: irate(node_disk_io_time_seconds_total{}[1m])
+    query_range: 6h
+    query_step: 15s
+  - promql: irate(node_disk_io_time_seconds_total{}[1m])
+    query_range: 24h
+    query_step: 60s
+  - promql: node_memory_MemTotal_bytes{} - (node_memory_Cached_bytes{} + node_memory_Buffers_bytes{} + node_memory_MemFree_bytes{})
+    query_range: 1h
+    query_step: 15s
+  - promql: node_memory_MemTotal_bytes{} - (node_memory_Cached_bytes{} + node_memory_Buffers_bytes{} + node_memory_MemFree_bytes{})
+    query_range: 3h
+    query_step: 15s
+  - promql: node_memory_MemTotal_bytes{} - (node_memory_Cached_bytes{} + node_memory_Buffers_bytes{} + node_memory_MemFree_bytes{})
+    query_range: 6h
+    query_step: 15s
+  - promql: node_memory_MemTotal_bytes{} - (node_memory_Cached_bytes{} + node_memory_Buffers_bytes{} + node_memory_MemFree_bytes{})
+    query_range: 24h
+    query_step: 60s
+  - promql: 100 - (avg(irate(node_cpu_seconds_total{mode='idle'}[5m])) * 100)
+    query_range: 1h
+    query_step: 15s
+  - promql: 100 - (avg(irate(node_cpu_seconds_total{mode='idle'}[5m])) * 100)
+    query_range: 3h
+    query_step: 15s
+  - promql: 100 - (avg(irate(node_cpu_seconds_total{mode='idle'}[5m])) * 100)
+    query_range: 6h
+    query_step: 15s
+  - promql: 100 - (avg(irate(node_cpu_seconds_total{mode='idle'}[5m])) * 100)
+    query_range: 24h
+    query_step: 60s
+  - promql: avg(irate(node_cpu_seconds_total{mode='iowait'}[5m])) * 100
+    query_range: 1h
+    query_step: 15s
+  - promql: avg(irate(node_cpu_seconds_total{mode='iowait'}[5m])) * 100
+    query_range: 3h
+    query_step: 15s
+  - promql: avg(irate(node_cpu_seconds_total{mode='iowait'}[5m])) * 100
+    query_range: 6h
+    query_step: 15s
+  - promql: avg(irate(node_cpu_seconds_total{mode='iowait'}[5m])) * 100
+    query_range: 24h
+    query_step: 60s
+  - promql: topk(10, max(irate(node_network_receive_bytes_total{device!~'tap.*'}[5m])) by (instance) )
+    query_range: 1h
+    query_step: 15s
+  - promql: topk(10, max(irate(node_network_receive_bytes_total{device!~'tap.*'}[5m])) by (instance) )
+    query_range: 3h
+    query_step: 15s
+  - promql: topk(10, max(irate(node_network_receive_bytes_total{device!~'tap.*'}[5m])) by (instance) )
+    query_range: 6h
+    query_step: 15s
+  - promql: topk(10, max(irate(node_network_receive_bytes_total{device!~'tap.*'}[5m])) by (instance) )
+    query_range: 24h
+    query_step: 60s
