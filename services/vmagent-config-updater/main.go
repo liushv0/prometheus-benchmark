@@ -41,7 +41,7 @@ func main() {
 					if r.Float64() >= p {
 						continue
 					}
-					stc.Labels["revision"] = revStr
+					stc.Labels["churnLabel"] = revStr
 				}
 			}
 			cLock.Unlock()
@@ -75,8 +75,8 @@ func newConfig(targetsCount int, scrapeInterval time.Duration, targetAddr string
 		scs = append(scs, &staticConfig{
 			Targets: []string{targetAddr},
 			Labels: map[string]string{
-				"instance": fmt.Sprintf("host-%d", i),
-				"revision": "r0",
+				"instance":   fmt.Sprintf("host-%d", i),
+				"churnLabel": "r0",
 			},
 		})
 	}
