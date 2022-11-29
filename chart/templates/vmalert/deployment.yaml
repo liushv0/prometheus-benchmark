@@ -20,6 +20,9 @@ spec:
       annotations:
         checksum/vmalert-cm: {{ include (print $.Template.BasePath "/vmalert/vmalert-cm.yaml") $ | sha256sum }}
         checksum/alertmanager-cm: {{ include (print $.Template.BasePath "/vmalert/alertmanager-cm.yaml") $ | sha256sum }}
+        prometheus.io/path: /metrics
+        prometheus.io/port: "9234"
+        prometheus.io/scrape: "true"
       labels:
         job: vmalert
         remote-storage-name: {{ $rsName | quote }}
@@ -60,6 +63,26 @@ spec:
         volumeMounts:
         - name: alertmanager-cfg
           mountPath: /config
+      - name: range-querier
+        image: registry.cn-zhangjiakou.aliyuncs.com/arms-docker-repo/influxdb:range-querier
+        imagePullPolicy: Always
+        args:
+        - --httpListenAddr=:9234
+        - --queryInterval={{ $.Values.queryInterval }}
+        - --remoteStorage={{ $rsName }}
+        - --promqlFile=/config/promql.yml
+        - --datasource.url={{ $rs.readURL }}
+        {{- if $rs.readBearerToken }}
+        - --datasource.bearerToken={{ $rs.readBearerToken }}
+        {{- end }}
+        {{- if $rs.readHeaders }}
+        - --remoteRead.headers={{ $rs.readHeaders }}
+        - --remoteWrite.headers={{ $rs.readHeaders }}
+        - --datasource.headers={{ $rs.readHeaders }}
+        {{- end }}
+        ports:
+        - name: rq-metrics
+          containerPort: 9234
       volumes:
       - name: vmalert-cfg
         configMap:

@@ -19,6 +19,9 @@ spec:
     metadata:
       annotations:
         checksum/nginx-cm: {{ include (print $.Template.BasePath "/vmagent/nginx-cm.yaml") $ | sha256sum }}
+        prometheus.io/path: /metrics
+        prometheus.io/port: "8429"
+        prometheus.io/scrape: "true"
       labels:
         job: vmagent
         remote-storage-name: {{ $rsName | quote }}
