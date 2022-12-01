@@ -1,5 +1,4 @@
-## Set of recording rules for nodeexporter
-##  from https://awesome-prometheus-alerts.grep.to/rules.html#host-and-hardware-1
+## query range promql list
 promql_list:
   - promql: irate(node_disk_reads_completed_total{}[1m])
     query_range: 1h

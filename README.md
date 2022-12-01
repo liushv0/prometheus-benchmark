@@ -1,3 +1,6 @@
+## update log
+增加range querier组件，需自行构建，见 `services/range-querier/README.md`
+
 # Prometheus benchmark
 
 Prometheus-benchmark allows testing data ingestion and querying performance

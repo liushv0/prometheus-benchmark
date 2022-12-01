@@ -12,3 +12,6 @@ docker push YOUR_IMAGE_TAG
 
 then edit `chart/templates/vmalert/deployment.yaml`, replace image name of container range-querier with YOUR_IMAGE_TAG. 
 构建完成后编辑 `chart/templates/vmalert/deployment.yaml`, 替换掉其中的range-querier 容器的镜像名
+
+#### see `chart/files/range_query.yaml` 
+
