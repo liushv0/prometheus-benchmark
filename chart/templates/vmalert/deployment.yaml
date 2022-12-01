@@ -64,7 +64,7 @@ spec:
         - name: alertmanager-cfg
           mountPath: /config
       - name: range-querier
-        image: registry.cn-zhangjiakou.aliyuncs.com/arms-docker-repo/influxdb:range-querier
+        image: RANGE-QUERY-IMAGE
         imagePullPolicy: Always
         args:
         - --httpListenAddr=:9234
@@ -83,6 +83,9 @@ spec:
         ports:
         - name: rq-metrics
           containerPort: 9234
+        volumeMounts:
+          - name: rq-cfg
+            mountPath: /config
       volumes:
       - name: vmalert-cfg
         configMap:
@@ -90,6 +93,9 @@ spec:
       - name: alertmanager-cfg
         configMap:
           name: {{ include "prometheus-benchmark.fullname" $ }}-alertmanager-cm
+      - name: rq-cfg
+        configMap:
+          name: {{ include "prometheus-benchmark.fullname" $ }}-range-query-cm
 ---
 {{- end }}
 {{ end }}
