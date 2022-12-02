@@ -1,6 +1,10 @@
 ## update log
 增加range querier组件，需自行构建，见 `services/range-querier/README.md`
 
+## issue
+1，默认拉起node exporter作为数据源，但node exporter实际的时间线数量未必能达到1230；
+2，alert.yaml中配置的部分指标，node exporter中可能并未吐出，所以alert.yaml中有一部分是无效配置；
+
 # Prometheus benchmark
 
 Prometheus-benchmark allows testing data ingestion and querying performance
