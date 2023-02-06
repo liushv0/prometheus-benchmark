@@ -19,6 +19,8 @@ var (
 	scrapeInterval             = flag.Duration("scrapeInterval", time.Second*5, "The scrape_interval to set at the scrape config returned from -httpListenAddr")
 	scrapeConfigUpdateInterval = flag.Duration("scrapeConfigUpdateInterval", time.Minute*10, "The -scrapeConfigUpdatePercent scrape targets are updated in the scrape config returned from -httpListenAddr every -scrapeConfigUpdateInterval")
 	scrapeConfigUpdatePercent  = flag.Float64("scrapeConfigUpdatePercent", 1, "The -scrapeConfigUpdatePercent scrape targets are updated in the scrape config returned from -httpListenAddr ever -scrapeConfigUpdateInterval")
+	metricsPath                = flag.String("metricsPath", "/metrics", "The HTTP resource path on which to fetch metrics from targets. /metrics for default")
+	scheme                     = flag.String("scheme", "http", "Configures the protocol scheme used for requests.  default = http")
 )
 
 func main() {
@@ -26,7 +28,7 @@ func main() {
 	flag.VisitAll(func(f *flag.Flag) {
 		log.Printf("-%s=%s", f.Name, f.Value)
 	})
-	c := newConfig(*targetsCount, *scrapeInterval, *targetAddr)
+	c := newConfig(*targetsCount, *scrapeInterval, *targetAddr, *metricsPath, *scheme)
 	var cLock sync.Mutex
 	p := *scrapeConfigUpdatePercent / 100
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
@@ -69,7 +71,7 @@ func (c *config) marshalYAML() []byte {
 	return data
 }
 
-func newConfig(targetsCount int, scrapeInterval time.Duration, targetAddr string) *config {
+func newConfig(targetsCount int, scrapeInterval time.Duration, targetAddr string, metricsPath string, scheme string) *config {
 	scs := make([]*staticConfig, 0, targetsCount)
 	for i := 0; i < targetsCount; i++ {
 		scs = append(scs, &staticConfig{
@@ -87,6 +89,8 @@ func newConfig(targetsCount int, scrapeInterval time.Duration, targetAddr string
 		ScrapeConfigs: []*scrapeConfig{
 			{
 				JobName:       "node_exporter",
+				Scheme:        scheme,
+				MetricsPath:   metricsPath,
 				StaticConfigs: scs,
 			},
 		},
@@ -111,6 +115,8 @@ type globalConfig struct {
 // See https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config
 type scrapeConfig struct {
 	JobName       string          `yaml:"job_name"`
+	MetricsPath   string          `yaml:"metrics_path"`
+	Scheme        string          `yaml:"scheme"`
 	StaticConfigs []*staticConfig `yaml:"static_configs"`
 }
 

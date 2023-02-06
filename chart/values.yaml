@@ -19,6 +19,10 @@ targetsCount: 1000
 # See also writeReplicas and writeURLReplicas options.
 scrapeInterval: 10s
 
+# scrape parameter
+scrapeScheme: http
+scrapeMetricsPath: /metrics
+
 # queryInterval is how often to send queries from files/alerts.yaml to remoteStorages.readURL
 # This option can be used for tuning read load at remoteStorages.
 # It is a good rule of thumb to keep it in sync with scrapeInterval.

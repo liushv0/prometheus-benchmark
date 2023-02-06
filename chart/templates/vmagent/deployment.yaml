@@ -38,6 +38,8 @@ spec:
         - --httpListenAddr=:8436
         - --targetsCount={{ $.Values.targetsCount }}
         - --targetAddr=0.0.0.0:9102
+        - --metricsPath={{ $.Values.scrapeMetricsPath }}
+        - --scheme={{ $.Value.scrapeScheme }}
         - --scrapeInterval={{ $.Values.scrapeInterval }}
         - --scrapeConfigUpdatePercent={{ $.Values.scrapeConfigUpdatePercent }}
         - --scrapeConfigUpdateInterval={{ $.Values.scrapeConfigUpdateInterval }}

@@ -39,7 +39,7 @@ var (
 	rt_histogram = promauto.NewHistogramVec(prometheus.HistogramOpts{
 		Name:    "prom_range_query_rt_ms",
 		Help:    "prom range query rt histogram, millisecond",
-		Buckets: []float64{100, 500, 1000, 3000, 10000},
+		Buckets: []float64{100, 500, 1000, 3000, 10000, 30000},
 	}, []string{"remote_storage", "query_range", "promql", "status_code"})
 )
 

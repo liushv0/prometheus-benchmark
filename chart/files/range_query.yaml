@@ -1,98 +1,95 @@
 ## query range promql list
 promql_list:
-  - promql: irate(node_disk_reads_completed_total{}[1m])
-    query_range: 1h
+  - promql: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 10
+    query_range: 2m
     query_step: 15s
-  - promql: irate(node_disk_reads_completed_total{}[1m])
-    query_range: 3h
+  - promql: rate(node_vmstat_pgmajfault[1m]) > 1000
+    query_range: 2m
     query_step: 15s
-  - promql: irate(node_disk_reads_completed_total{}[1m])
+  - promql: sum by (instance) (rate(node_network_receive_bytes_total[2m])) / 1024 / 1024 > 100
+    query_range: 5m
+    query_step: 15s
+  - promql: sum by (instance) (rate(node_network_transmit_bytes_total[2m])) / 1024 / 1024 > 100
+    query_range: 2m
+    query_step: 15s
+  - promql: sum by (instance) (rate(node_disk_read_bytes_total[2m])) / 1024 / 1024 > 50
+    query_range: 5m
+    query_step: 15s
+  - promql: sum by (instance) (rate(node_disk_written_bytes_total[2m])) / 1024 / 1024 > 50
+    query_range: 2m
+    query_step: 15s
+  - promql: (node_filesystem_avail_bytes * 100) / node_filesystem_size_bytes < 10 and ON (instance, device, mountpoint) node_filesystem_readonly == 0
+    query_range: 2m
+    query_step: 15s
+  - promql: (node_filesystem_avail_bytes * 100) / node_filesystem_size_bytes < 10 and ON (instance, device, mountpoint) predict_linear(node_filesystem_avail_bytes{fstype!~"tmpfs"}[1h], 24 * 3600) < 0 and ON (instance, device, mountpoint) node_filesystem_readonly == 0
+    query_range: 2m
+    query_step: 15s
+  - promql: node_filesystem_files_free{mountpoint ="/rootfs"} / node_filesystem_files{mountpoint="/rootfs"} * 100 < 10 and ON (instance, device, mountpoint) node_filesystem_readonly{mountpoint="/rootfs"} == 0
+    query_range: 2m
+    query_step: 15s
+  - promql: node_filesystem_files_free{mountpoint ="/rootfs"} / node_filesystem_files{mountpoint="/rootfs"} * 100 < 10 and predict_linear(node_filesystem_files_free{mountpoint="/rootfs"}[1h], 24 * 3600) < 0 and ON (instance, device, mountpoint) node_filesystem_readonly{mountpoint="/rootfs"} == 0
+    query_range: 2m
+    query_step: 15s
+  - promql: rate(node_disk_read_time_seconds_total[1m]) / rate(node_disk_reads_completed_total[1m]) > 0.1 and rate(node_disk_reads_completed_total[1m]) > 0
+    query_range: 2m
+    query_step: 15s
+  - promql: rate(node_disk_write_time_seconds_total[1m]) / rate(node_disk_writes_completed_total[1m]) > 0.1 and rate(node_disk_writes_completed_total[1m]) > 0
+    query_range: 2m
+    query_step: 15s
+  - promql: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 80
+    query_range: 1m
+    query_step: 15s
+  - promql: avg by(instance) (rate(node_cpu_seconds_total{mode="steal"}[5m])) * 100 > 10
+    query_range: 1m
+    query_step: 15s
+  - promql: (rate(node_context_switches_total[5m])) / (count without(cpu, mode) (node_cpu_seconds_total{mode="idle"})) > 2000
+    query_range: 2m
+    query_step: 15s
+  - promql: (1 - (node_memory_SwapFree_bytes / node_memory_SwapTotal_bytes)) * 100 > 80
+    query_range: 2m
+    query_step: 15s
+  - promql: node_systemd_unit_state{state="failed"} == 1
+    query_range: 2m
+    query_step: 15s
+  - promql: node_hwmon_temp_celsius > 75
+    query_range: 1m
+    query_step: 15s
+  - promql: node_hwmon_temp_crit_alarm_celsius == 1
+    query_range: 2m
+    query_step: 15s
+  - promql: node_md_state{state="inactive"} > 0
+    query_range: 2m
+    query_step: 15s
+  - promql: node_md_disks{state="failed"} > 0
+    query_range: 2m
+    query_step: 15s
+  - promql: increase(node_vmstat_oom_kill[1m]) > 0
+    query_range: 2m
+    query_step: 15s
+  - promql: count(sum(label_replace(node_uname_info, "kernel", "$1", "release", "([0-9]+.[0-9]+.[0-9]+).*")) by (kernel)) > 1
     query_range: 6h
     query_step: 15s
-  - promql: irate(node_disk_reads_completed_total{}[1m])
-    query_range: 24h
+  - promql: increase(node_vmstat_oom_kill[1m]) > 0
+    query_range: 2m
+    query_step: 15s
+  - promql: increase(node_edac_correctable_errors_total[1m]) > 0
+    query_range: 1m
+    query_step: 15s
+  - promql: node_edac_uncorrectable_errors_total > 0
+    query_range: 2m
+    query_step: 15s
+  - promql: rate(node_network_receive_errs_total[2m]) / rate(node_network_receive_packets_total[2m]) > 0.01
+    query_range: 2m
     query_step: 60s
-  - promql: irate(node_network_receive_bytes_total{device!~'tap.*'}[5m])*8
-    query_range: 1h
+  - promql: rate(node_network_transmit_errs_total[2m]) / rate(node_network_transmit_packets_total[2m]) > 0.01
+    query_range: 2m
     query_step: 15s
-  - promql: irate(node_network_receive_bytes_total{device!~'tap.*'}[5m])*8
-    query_range: 3h
+  - promql: (rate(node_network_receive_bytes_total{device!~"^tap.*"}[1m]) + rate(node_network_transmit_bytes_total{device!~"^tap.*"}[1m])) / node_network_speed_bytes{device!~"^tap.*"} > 0.8 < 10000
+    query_range: 5m
     query_step: 15s
-  - promql: irate(node_network_receive_bytes_total{device!~'tap.*'}[5m])*8
-    query_range: 6h
+  - promql: (node_bonding_active - node_bonding_slaves) != 0
+    query_range: 2m
     query_step: 15s
-  - promql: irate(node_network_receive_bytes_total{device!~'tap.*'}[5m])*8
-    query_range: 24h
-    query_step: 60s
-  - promql: irate(node_network_transmit_bytes_total{device!~'tap.*'}[5m])*8
-    query_range: 1h
+  - promql: node_nf_conntrack_entries / node_nf_conntrack_entries_limit > 0.8
+    query_range: 3m
     query_step: 15s
-  - promql: irate(node_network_transmit_bytes_total{device!~'tap.*'}[5m])*8
-    query_range: 3h
-    query_step: 15s
-  - promql: irate(node_network_transmit_bytes_total{device!~'tap.*'}[5m])*8
-    query_range: 6h
-    query_step: 15s
-  - promql: irate(node_network_transmit_bytes_total{device!~'tap.*'}[5m])*8
-    query_range: 24h
-    query_step: 60s
-  - promql: irate(node_disk_io_time_seconds_total{}[1m])
-    query_range: 1h
-    query_step: 15s
-  - promql: irate(node_disk_io_time_seconds_total{}[1m])
-    query_range: 3h
-    query_step: 15s
-  - promql: irate(node_disk_io_time_seconds_total{}[1m])
-    query_range: 6h
-    query_step: 15s
-  - promql: irate(node_disk_io_time_seconds_total{}[1m])
-    query_range: 24h
-    query_step: 60s
-  - promql: node_memory_MemTotal_bytes{} - (node_memory_Cached_bytes{} + node_memory_Buffers_bytes{} + node_memory_MemFree_bytes{})
-    query_range: 1h
-    query_step: 15s
-  - promql: node_memory_MemTotal_bytes{} - (node_memory_Cached_bytes{} + node_memory_Buffers_bytes{} + node_memory_MemFree_bytes{})
-    query_range: 3h
-    query_step: 15s
-  - promql: node_memory_MemTotal_bytes{} - (node_memory_Cached_bytes{} + node_memory_Buffers_bytes{} + node_memory_MemFree_bytes{})
-    query_range: 6h
-    query_step: 15s
-  - promql: node_memory_MemTotal_bytes{} - (node_memory_Cached_bytes{} + node_memory_Buffers_bytes{} + node_memory_MemFree_bytes{})
-    query_range: 24h
-    query_step: 60s
-  - promql: 100 - (avg(irate(node_cpu_seconds_total{mode='idle'}[5m])) * 100)
-    query_range: 1h
-    query_step: 15s
-  - promql: 100 - (avg(irate(node_cpu_seconds_total{mode='idle'}[5m])) * 100)
-    query_range: 3h
-    query_step: 15s
-  - promql: 100 - (avg(irate(node_cpu_seconds_total{mode='idle'}[5m])) * 100)
-    query_range: 6h
-    query_step: 15s
-  - promql: 100 - (avg(irate(node_cpu_seconds_total{mode='idle'}[5m])) * 100)
-    query_range: 24h
-    query_step: 60s
-  - promql: avg(irate(node_cpu_seconds_total{mode='iowait'}[5m])) * 100
-    query_range: 1h
-    query_step: 15s
-  - promql: avg(irate(node_cpu_seconds_total{mode='iowait'}[5m])) * 100
-    query_range: 3h
-    query_step: 15s
-  - promql: avg(irate(node_cpu_seconds_total{mode='iowait'}[5m])) * 100
-    query_range: 6h
-    query_step: 15s
-  - promql: avg(irate(node_cpu_seconds_total{mode='iowait'}[5m])) * 100
-    query_range: 24h
-    query_step: 60s
-  - promql: topk(10, max(irate(node_network_receive_bytes_total{device!~'tap.*'}[5m])) by (instance) )
-    query_range: 1h
-    query_step: 15s
-  - promql: topk(10, max(irate(node_network_receive_bytes_total{device!~'tap.*'}[5m])) by (instance) )
-    query_range: 3h
-    query_step: 15s
-  - promql: topk(10, max(irate(node_network_receive_bytes_total{device!~'tap.*'}[5m])) by (instance) )
-    query_range: 6h
-    query_step: 15s
-  - promql: topk(10, max(irate(node_network_receive_bytes_total{device!~'tap.*'}[5m])) by (instance) )
-    query_range: 24h
-    query_step: 60s
