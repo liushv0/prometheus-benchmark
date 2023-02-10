@@ -6,5 +6,5 @@ metadata:
   labels:
     {{- include "prometheus-benchmark.labels" . | nindent 4 }}
 data:
-  alerts.yml: |
+  promql.yml: |
 {{ .Files.Get "files/range_query.yaml" | indent 4}}
